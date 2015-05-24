@@ -1,0 +1,14 @@
+each item in items
+  div.plugin-container.gpio_button
+    p.description
+      - if (item.description)
+        strong #{item.description} 
+        small.muted (PIN #{item.pin}) 
+      - else 
+        span.muted #{direction}:  
+        strong PIN #{item.pin} 
+    div
+      button.btn.btn-large.socket(type="button", data-socket="gpio-click", data-id="#{item._id}")
+        i.icon-ok
+        | Click
+
