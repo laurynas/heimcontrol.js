@@ -25,6 +25,8 @@ define([ 'pi-gpio' ], function(gpio) {
 
     var that = this;
 
+    that.openInputs();
+
     // Ping interval
     setInterval(function() {
       that.parse();
@@ -65,6 +67,26 @@ define([ 'pi-gpio' ], function(gpio) {
   };
 
   /**
+   * Open (export) GPIO inputs
+   *
+   * @method openInputs
+   */
+  Gpio.prototype.openInputs = function() {
+    var that = this;
+    that.app.get('db').collection(this.collection, function(err, collection) {
+      collection.find({
+        direction: 'input'
+      }).toArray(function(err, result) {
+        result.forEach(function(item) {
+          gpio.open(parseInt(item.pin), "input", function(err) {
+            if (err) console.log("Unable to open input: " + err);
+          });
+        });
+      });
+    });
+  };
+
+ /**
    * Parse GPIO the ports that are used as input and send the result to the client websocket
    * 
    * @method parse
@@ -77,16 +99,14 @@ define([ 'pi-gpio' ], function(gpio) {
           direction: 'input'
         }).toArray(function(err, result) {
           result.forEach(function(item) {
-            gpio.setDirection(parseInt(item.pin), "input", function(err) {
-              gpio.read(parseInt(item.pin), function(err, value) {
-                if (!err) {
-                  that.values[item._id] = value;
-                  that.app.get('sockets').emit('gpio-input', {
-                    id: item._id,
-                    value: value
-                  });
-                }
-              });
+            gpio.read(parseInt(item.pin), function(err, value) {
+              if (!err) {
+                that.values[item._id] = value;
+                that.app.get('sockets').emit('gpio-input', {
+                  id: item._id,
+                  value: value
+                });
+              }
             });
           });
         });
