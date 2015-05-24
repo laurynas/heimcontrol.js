@@ -17,6 +17,11 @@ each item in items
         span.label.label-important.label-large.gpiostatus(data-id="#{item._id}", data-value="0", class=(item.value == '1' ? 'hide' : ''))
           i.icon-circle-blank
           | #{item.down || 'Down'}
+    - else if (item.direction == 'output-click')
+      div
+        button.btn.btn-large.socket(type="button", data-socket="gpio-click", data-id="#{item._id}")
+          i.icon-circle
+          | Click
     - else
       div.btn-group(data-toggle="buttons-radio")
         button.btn.btn-large.socket(type="button", data-socket="gpio-toggle", data-id="#{item._id}", data-value="1", class=(item.value == '1' ? 'active' : ''))

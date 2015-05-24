@@ -28,7 +28,7 @@ define([ 'pi-gpio' ], function(gpio) {
     // Ping interval
     setInterval(function() {
       that.parse();
-    }, 100);
+    }, 300);
 
     app.get('sockets').on('connection', function(socket) {
       // GPIO toggle
@@ -36,6 +36,9 @@ define([ 'pi-gpio' ], function(gpio) {
         that.toggle(data);
       });
 
+      socket.on('gpio-click', function(data) {
+        that.click(data);
+      });
     });
   };
 
@@ -59,6 +62,29 @@ define([ 'pi-gpio' ], function(gpio) {
             id: item._id,
             value: item.value
           });
+        });
+      });
+    });
+  };
+
+  /**
+   * Click a GPIO port
+   * 
+   * @method click
+   * @param {Object} data The websocket data
+   * @param {String} data.id The ID of the database entry
+   * @param {String} data.value The value to set
+   */
+  Gpio.prototype.click = function(data) {
+    var that = this;
+    this.pluginHelper.findItem(this.collection, data.id, function(err, item, collection) {
+      gpio.open(parseInt(item.pin), "output", function(err) {
+        gpio.write(parseInt(item.pin), 1, function() {
+          setTimeout(function() {
+            gpio.write(parseInt(item.pin), 0, function() {
+              gpio.close(parseInt(item.pin));
+            });
+          }, item.duration || 100);
         });
       });
     });

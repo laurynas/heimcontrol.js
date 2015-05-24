@@ -18,11 +18,12 @@ div.container
             label(for="description") Description (optional):
             input(type="text", name="data[#{i}][description]", placeholder="Light", value=(item.description ? item.description : ''))
             div.switch
-              label(for="direction") Direction:
+              label(for="direction") Type:
               select(name="data[#{i}][direction")
                 option(disabled="disabled", selected=(item.direction == '')) Choose
-                option(value="output", selected=(item.direction == 'output')) Ouput
                 option(value="input", selected=(item.direction == 'input')) Input
+                option(value="output", selected=(item.direction == 'output')) Ouput
+                option(value="output-click", selected=(item.direction == 'output-click')) Click
               div.switch-container.no-clear-on-switch
                 label(for="pin") physical GPIO Pin number (Wiring Pi no. in parentheses):
                 select(name="data[#{i}][pin]")
@@ -55,6 +56,10 @@ div.container
                   input(type="text", name="data[#{i}][down]", placeholder="Down", value=(item.down ? item.down : ''))
                   label(for="up") Up text (optional):
                   input(type="text", name="data[#{i}][up]", placeholder="Up", value=(item.up ? item.up : ''))
+
+                div.output-click(class=(item.direction == 'output-click' ? '' : 'hidden'))
+                  label(for="duration") Click duration (optional):
+                  input(type="text", name="data[#{i}][duration]", placeholder="100", value=(item.duration ? item.duration : ''))
 
             input(type="hidden", name="data[#{i}][_id]", value="#{item._id}")
             input(type="hidden", name="data[#{i}][value]", value="0")
